@@ -51,7 +51,7 @@ export default function Page({ children }) {
                         Object.values(pageConfig)
                             .sort((a, b) => a.navOrder - b.navOrder)
                             .map(page => (
-                                <ListItem button component={Link} to={page.url}>
+                                <ListItem button key={page.url} component={Link} to={page.url}>
                                     <ListItemText primary={page.name} />
                                 </ListItem>
                             ))

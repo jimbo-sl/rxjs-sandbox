@@ -1,10 +1,11 @@
 import Home from "./pages/home/Home";
+import SwitchMap from "./pages/switchMap/SwitchMap";
 
-export default {    
+const config = {    
     switchMap: {
         name: 'switchMap',
         url: '/switchMap',
-        component: <h1>Switch Map</h1>,
+        component: <SwitchMap />,
         navOrder: 2,
         routeOrder: 1
     }, 
@@ -29,4 +30,6 @@ export default {
         navOrder: 1,
         routeOrder: 99
     },
-}
+};
+
+export default config;
