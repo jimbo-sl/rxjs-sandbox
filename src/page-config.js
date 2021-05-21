@@ -2,6 +2,7 @@ import Home from "./pages/home/Home";
 import SwitchMap from "./pages/switchMap/SwitchMap";
 import MergeMap from "./pages/mergeMap/MergeMap";
 import ExhaustMap from "./pages/exhaustMap/ExhaustMap";
+import ConcatMap from "./pages/concatMap/ConcatMap";
 
 const config = {    
     switchMap: {
@@ -24,6 +25,13 @@ const config = {
         component: <ExhaustMap />,
         navOrder: 4,
         routeOrder: 3
+    },
+    concatMap: {
+        name: 'concatMap',
+        url: '/concatMap',
+        component: <ConcatMap />,
+        navOrder: 5,
+        routeOrder: 4
     },
     home: {
         name: 'Home',

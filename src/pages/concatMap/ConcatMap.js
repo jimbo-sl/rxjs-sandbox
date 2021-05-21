@@ -1,7 +1,7 @@
 import { Button, makeStyles } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { interval } from "rxjs";
-import { switchMap, map, scan, startWith, takeWhile } from "rxjs/operators";
+import { concatMap, map, scan, startWith, takeWhile } from "rxjs/operators";
 import createEventStore from '../../services/event-store';
 import ProgressBars from "../../components/ProgressBars";
 
@@ -16,7 +16,7 @@ const INTERVAL = 100;
 const store = createEventStore()
 
 const observable$ = store.stream$.pipe(
-    switchMap(({ id }) =>
+    concatMap(({ id }) =>
         interval(INTERVAL).pipe(
             startWith(0),
             takeWhile(progress => progress <= 100),
@@ -39,7 +39,7 @@ const observable$ = store.stream$.pipe(
     })))
 )
 
-const SwitchMap = () => {
+const ConcatMap = () => {
     const classes = useStyles();
 
     const [state, setState] = useState([]);
@@ -65,11 +65,11 @@ const SwitchMap = () => {
     return (
         <>
             <ProgressBars bars={state} />
-            
+
             <Button className={classes.btn} variant="contained" color="primary" onClick={onTriggerClick}>Trigger Outer Observable!</Button>
             <Button className={classes.btn} variant="contained" color="secondary" onClick={onCompleteClick}>Complete Outer Observable!</Button>
         </>
     );
 }
 
-export default SwitchMap;
+export default ConcatMap;

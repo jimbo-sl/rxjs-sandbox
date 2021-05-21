@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { interval, Subject } from "rxjs";
+import { interval } from "rxjs";
 import { map, scan, startWith, takeWhile } from "rxjs/operators";
+import createEventStore from '../../services/event-store'; 
 
 const INTERVAL = 100;
 
@@ -13,17 +14,7 @@ const innerObservableFn = id => interval(INTERVAL).pipe(
     }))
 )
 
-const createEventStore = () => {
-    const subject = new Subject();
-
-    return {
-        stream$: subject,
-        triggerEvent: (e) => subject.next(e),
-        complete: () => subject.complete()
-    }
-}
-
-const withFlatteningStrategy = (flatteningFn) => WrappedComponent => () => {
+const withFlatteningStrategy = (flatteningFn) => WrappedComponent => (props) => {
     const [state, setState] = useState({});
     const [store, setStore] = useState({});
 
@@ -60,7 +51,7 @@ const withFlatteningStrategy = (flatteningFn) => WrappedComponent => () => {
     };
 
     return (
-        <WrappedComponent obj={state} onTrigger={onTrigger} onComplete={onComplete} />
+        <WrappedComponent obj={state} onTrigger={onTrigger} onComplete={onComplete} {...props}/>
     )
 }
 
