@@ -1,5 +1,7 @@
 import Home from "./pages/home/Home";
 import SwitchMap from "./pages/switchMap/SwitchMap";
+import MergeMap from "./pages/mergeMap/MergeMap";
+import ExhaustMap from "./pages/exhaustMap/ExhaustMap";
 
 const config = {    
     switchMap: {
@@ -12,14 +14,14 @@ const config = {
     mergeMap: {
         name: 'mergeMap',
         url: '/mergeMap',
-        component: <h1>Merge Map</h1>,
+        component: <MergeMap />,
         navOrder: 3,
         routeOrder: 2
     }, 
     exhaustMap: {
         name: 'exhaustMap',
         url: '/exhaustMap',
-        component: <h1>Exhaust Map</h1>,
+        component: <ExhaustMap />,
         navOrder: 4,
         routeOrder: 3
     },

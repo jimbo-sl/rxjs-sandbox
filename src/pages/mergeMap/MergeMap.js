@@ -1,5 +1,5 @@
-import { switchMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import FlatteningStrategyDisplay from '../../components/FlatteningStrategyDisplay';
 import withFlatteningStrategy from '../../components/HOCs/withFlatteningStrategy';
 
-export default withFlatteningStrategy(switchMap)(FlatteningStrategyDisplay)
+export default withFlatteningStrategy(mergeMap)(FlatteningStrategyDisplay)
