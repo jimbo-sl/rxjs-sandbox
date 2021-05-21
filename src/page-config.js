@@ -3,6 +3,7 @@ import SwitchMap from "./pages/switchMap/SwitchMap";
 import MergeMap from "./pages/mergeMap/MergeMap";
 import ExhaustMap from "./pages/exhaustMap/ExhaustMap";
 import ConcatMap from "./pages/concatMap/ConcatMap";
+import Share from "./pages/share/Share";
 
 const config = {    
     switchMap: {
@@ -32,6 +33,13 @@ const config = {
         component: <ConcatMap />,
         navOrder: 5,
         routeOrder: 4
+    },
+    share: {
+        name: 'share',
+        url: '/share',
+        component: <Share />,
+        navOrder: 6,
+        routeOrder: 5
     },
     home: {
         name: 'Home',

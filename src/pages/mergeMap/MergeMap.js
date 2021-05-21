@@ -1,15 +1,9 @@
-import { Button, makeStyles } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { interval } from "rxjs";
 import { mergeMap, map, scan, startWith, takeWhile } from "rxjs/operators";
 import createEventStore from '../../services/event-store';
-import ProgressBars from "../../components/ProgressBars";
-
-const useStyles = makeStyles((theme) => ({
-    btn: {
-        marginRight: theme.spacing(2)
-    }
-}));
+import FlatteningOperatorExample from "../../components/FlatteningOperatorExample";
+import { Card, CardContent } from "@material-ui/core";
 
 const INTERVAL = 100;
 
@@ -40,8 +34,6 @@ const observable$ = store.stream$.pipe(
 )
 
 const MergeMap = () => {
-    const classes = useStyles();
-
     const [state, setState] = useState([]);
     const [count, setCount] = useState(0);
 
@@ -63,12 +55,26 @@ const MergeMap = () => {
     };
 
     return (
-        <>
-        <ProgressBars bars={state} />
-            
-            <Button className={classes.btn} variant="contained" color="primary" onClick={onTriggerClick}>Trigger Outer Observable!</Button>
-            <Button className={classes.btn} variant="contained" color="secondary" onClick={onCompleteClick}>Complete Outer Observable!</Button>
-        </>
+        <Card variant="outlined">
+            <CardContent>
+                <h2>mergeMap</h2>
+                <p>
+                    Click the 'Trigger' button to push a value on to the outer observable. The progress bar that appears represents the inner observable
+                    that is generated for each value on the outer observable.
+                </p>
+                <p>
+                    The <i>mergeMap</i> operator means that any values added to the outer observable (button clicks) will immediately trigger a new inner observable
+                    (progress bar). Any previous inner observables will continue to run through to completion.
+                </p>
+                <p>
+                    If the outer observable completes, no further inner observables will be created but the inner observable will run to completion.
+                    Note that the inner observable completes when the values reaches 100.
+                </p>
+
+                <FlatteningOperatorExample bars={state} onTrigger={onTriggerClick} onComplete={onCompleteClick} />
+
+            </CardContent>
+        </Card>
     );
 }
 
