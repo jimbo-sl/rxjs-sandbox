@@ -1,11 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import PropTypes from 'prop-types'
-import pageConfig from './page-config';
-import { Link } from 'react-router-dom';
+import routes from './routes';
+import NavGroup from './components/NavGroup';
+import NavItem from './components/NavItem';
 
 const drawerWidth = 240;
 
@@ -32,6 +30,24 @@ Page.propTypes = {
     children: PropTypes.element.isRequired
 }
 
+const groups = routes.reduce((groups, route) => {
+    if (route.category == null) {
+        groups[route.name] = {
+            ...route,
+            isGroup: false
+        };
+    }
+    else {
+        const group = (groups[route.category] || { options: [] });
+        group.name = route.category;
+        group.isGroup = true;
+        group.options.push(route);
+        groups[route.category] = group;
+    }
+
+    return groups;
+}, {});
+
 export default function Page({ children }) {
     const classes = useStyles();
 
@@ -45,18 +61,15 @@ export default function Page({ children }) {
                 }}
                 anchor="left"
             >
-
-                <List>
-                    {
-                        Object.values(pageConfig)
-                            .sort((a, b) => a.navOrder - b.navOrder)
-                            .map(page => (
-                                <ListItem button key={page.url} component={Link} to={page.url}>
-                                    <ListItemText primary={page.name} />
-                                </ListItem>
-                            ))
-                    }
-                </List>
+                {
+                    Object.values(groups)
+                        .sort((a, b) => a.isGroup - b.isGroup)
+                        .map((item) =>
+                            item.isGroup
+                                ? <NavGroup key={item.name} group={item} />
+                                : <NavItem key={item.url} route={item} />
+                        )
+                }
             </Drawer>
             <main className={classes.content}>
                 {children}

@@ -2,7 +2,7 @@ import { Button, Card, CardContent, makeStyles } from "@material-ui/core";
 import { useEffect, useRef, useState } from "react";
 import { interval } from "rxjs";
 import { share, startWith, takeWhile } from "rxjs/operators";
-import ProgressBar from "../../components/ProgressBar";
+import ProgressBar from "../../../components/ProgressBar";
 
 const useStyles = makeStyles((theme) => ({
     btn: {

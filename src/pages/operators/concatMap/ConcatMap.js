@@ -2,8 +2,8 @@ import { Card, CardContent } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { interval } from "rxjs";
 import { concatMap, map, scan, startWith, takeWhile } from "rxjs/operators";
-import createEventStore from '../../services/event-store';
-import FlatteningOperatorExample from "../../components/FlatteningOperatorExample";
+import createEventStore from '../../../services/event-store';
+import FlatteningOperatorExample from '../../../components/FlatteningOperatorExample';
 
 const INTERVAL = 100;
 

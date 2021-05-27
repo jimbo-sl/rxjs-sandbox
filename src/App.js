@@ -1,7 +1,7 @@
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import './App.css';
 import Page from './Page';
-import pageConfig from './page-config';
+import routes from './routes';
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       <Page>
         <Switch>
           {
-            Object.values(pageConfig)
+            routes
               .sort((a, b) => a.routeOrder - b.routeOrder)
               .map(page => <Route key={page.name} path={page.url}>{page.component}</Route>)
           }

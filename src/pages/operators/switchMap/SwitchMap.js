@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { interval } from "rxjs";
-import { mergeMap, map, scan, startWith, takeWhile } from "rxjs/operators";
-import createEventStore from '../../services/event-store';
-import FlatteningOperatorExample from "../../components/FlatteningOperatorExample";
+import { switchMap, map, scan, startWith, takeWhile } from "rxjs/operators";
+import createEventStore from '../../../services/event-store';
+import FlatteningOperatorExample from '../../../components/FlatteningOperatorExample';
 import { Card, CardContent } from "@material-ui/core";
 
 const INTERVAL = 100;
@@ -10,7 +10,7 @@ const INTERVAL = 100;
 const store = createEventStore()
 
 const observable$ = store.stream$.pipe(
-    mergeMap(({ id }) =>
+    switchMap(({ id }) =>
         interval(INTERVAL).pipe(
             startWith(0),
             takeWhile(progress => progress <= 100),
@@ -33,7 +33,7 @@ const observable$ = store.stream$.pipe(
     })))
 )
 
-const MergeMap = () => {
+const SwitchMap = () => {
     const [state, setState] = useState([]);
     const [count, setCount] = useState(0);
 
@@ -57,14 +57,14 @@ const MergeMap = () => {
     return (
         <Card variant="outlined">
             <CardContent>
-                <h2>mergeMap</h2>
+                <h2>switchMap</h2>
                 <p>
                     Click the 'Trigger' button to push a value on to the outer observable. The progress bar that appears represents the inner observable
                     that is generated for each value on the outer observable.
                 </p>
                 <p>
-                    The <i>mergeMap</i> operator means that any values added to the outer observable (button clicks) will immediately trigger a new inner observable
-                    (progress bar). Any previous inner observables will continue to run through to completion.
+                    The <i>switchMap</i> operator means that any values added to the outer observable (button clicks) will trigger a new inner observable
+                    (progress bar), while unsubscribing from the previous inner observable.
                 </p>
                 <p>
                     If the outer observable completes, no further inner observables will be created but the inner observable will run to completion.
@@ -78,4 +78,4 @@ const MergeMap = () => {
     );
 }
 
-export default MergeMap;
+export default SwitchMap;
