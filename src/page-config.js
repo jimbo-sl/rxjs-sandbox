@@ -4,6 +4,7 @@ import MergeMap from "./pages/mergeMap/MergeMap";
 import ExhaustMap from "./pages/exhaustMap/ExhaustMap";
 import ConcatMap from "./pages/concatMap/ConcatMap";
 import Share from "./pages/share/Share";
+import WebSocket from "./pages/webSocket/WebSocket";
 
 const config = {    
     switchMap: {
@@ -40,6 +41,13 @@ const config = {
         component: <Share />,
         navOrder: 6,
         routeOrder: 5
+    },
+    webSocket: {
+        name: 'webSocket',
+        url: '/webSocket',
+        component: <WebSocket />,
+        navOrder: 7,
+        routeOrder: 6
     },
     home: {
         name: 'Home',

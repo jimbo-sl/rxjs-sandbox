@@ -40,19 +40,24 @@ const Share = () => {
     }
 
     useEffect(() => {
-        cold$.subscribe(v => {
+        const sub1 = cold$.subscribe(v => {
             setColdState({
                 ...coldStateRef.current,
                 0: v
             });
         });
 
-        hot$.subscribe(v => {
+        const sub2 = hot$.subscribe(v => {
             setHotState({
                 ...hotStateRef.current,
                 0: v
             });
         });
+
+        return () => {
+            sub1.unsubscribe();
+            sub2.unsubscribe();
+        }
     }, [])
 
     const onColdSubscribe = () => {
