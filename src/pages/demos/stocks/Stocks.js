@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Grid, makeStyles, TextField } from '@material-ui/core';
 import { useEffect, useRef, useState } from 'react';
-import { debounceTime, filter, map, pluck, scan, tap } from 'rxjs/operators';
+import { debounceTime, filter, map, pluck, scan } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +38,7 @@ function WebSocket() {
     useEffect(() => {
         const sub = obs$
             .pipe(
+                debounceTime(250),
                 filter(v => v.type === 'trade'),
                 pluck('data'),
                 map(data => data.reduce((acc, curr) => ({

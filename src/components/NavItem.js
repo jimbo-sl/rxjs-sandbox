@@ -1,5 +1,5 @@
 import { ListItem, ListItemText, makeStyles } from '@material-ui/core'
-import React, { memo, useEffect } from 'react'
+import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({

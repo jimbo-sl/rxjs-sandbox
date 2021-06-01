@@ -1,5 +1,5 @@
 import { List, ListSubheader } from '@material-ui/core'
-import React, { memo, useEffect } from 'react'
+import React, { memo } from 'react'
 import NavItem from './NavItem';
 
 const NavGroup = ({ group }) => (
