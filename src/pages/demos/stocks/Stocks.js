@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Grid, makeStyles, TextField } from '@material-ui/core';
 import { useEffect, useRef, useState } from 'react';
-import { debounceTime, filter, map, pluck, scan } from 'rxjs/operators';
+import { debounceTime, filter, map, pluck, scan, tap } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
 
 const useStyles = makeStyles((theme) => ({
@@ -17,6 +17,7 @@ function WebSocket() {
     const classes = useStyles();
 
     const [state, setState] = useState({});
+    const [activeStockKeys, _setActiveStockKeys] = useState([]);
     const [stockName, _setStockName] = useState('');
 
     const stockNameRef = useRef(stockName)
@@ -26,10 +27,17 @@ function WebSocket() {
         _setStockName(state);
     }
 
+    const activeStockKeysRef = useRef(activeStockKeys)
+
+    const setActiveStockKeys = state => {
+        console.log('keys', state)
+        activeStockKeysRef.current = state;
+        _setActiveStockKeys(state);
+    }
+
     useEffect(() => {
         const sub = obs$
             .pipe(
-                debounceTime(250),
                 filter(v => v.type === 'trade'),
                 pluck('data'),
                 map(data => data.reduce((acc, curr) => ({
@@ -50,7 +58,6 @@ function WebSocket() {
                 }), {})
             )
             .subscribe(v => {
-                console.log(v);
                 setState(v);
             });
 
@@ -61,6 +68,17 @@ function WebSocket() {
 
     const onAddToFeed = () => {
         obs$.next({ type: "subscribe", symbol: stockNameRef.current });
+        setActiveStockKeys([...activeStockKeysRef.current, stockNameRef.current])
+    }
+
+    const onUnsubscribe = (key) => {
+
+        setActiveStockKeys(activeStockKeysRef.current.filter(x => x !== key));
+        obs$.next({ type: "unsubscribe", symbol: key });
+
+        const { [key]: value, ...withoutProp } = state;
+
+        setState(withoutProp);
     }
 
     return (
@@ -73,22 +91,25 @@ function WebSocket() {
 
             <Grid container spacing={3}>
                 {
-                    Object.keys(state).map(key => (
-                        <Grid key={key} item xs={3}>
-                            <Card>
-                                <CardContent>
-                                    <h3>{key}</h3>
-                                    <h4>{state[key].value}</h4>
-                                    <h5>{
-                                        state[key].change > 0 ? '+' :
-                                            state[key].change < 0 ? '-' :
-                                                0
-                                    }
-                                    </h5>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))
+                    Object.keys(state)
+                        .filter(key => activeStockKeysRef.current.includes(key))
+                        .map(key => (
+                            <Grid key={key} item xs={3}>
+                                <Card>
+                                    <CardContent>
+                                        <h3>{key}</h3>
+                                        <h4>{state[key].value}</h4>
+                                        <h5>{
+                                            state[key].change > 0 ? '+' :
+                                                state[key].change < 0 ? '-' :
+                                                    0
+                                        }
+                                        </h5>
+                                        <Button color="secondary" variant="contained" onClick={() => onUnsubscribe(key)}>Unsubscribe</Button>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))
                 }
             </Grid>
         </>
