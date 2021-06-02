@@ -1,7 +1,8 @@
-import { Button, Card, CardContent, Grid, makeStyles, TextField } from '@material-ui/core';
+import { Button, Grid, makeStyles, TextField } from '@material-ui/core';
 import { useEffect, useRef, useState } from 'react';
 import { debounceTime, filter, map, pluck, scan } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
+import StockCard from './components/StockCard';
 
 const useStyles = makeStyles((theme) => ({
     btn: {
@@ -50,6 +51,7 @@ function WebSocket() {
                     ...Object.keys(curr).reduce((obj, key) => ({
                         ...obj,
                         [key]: {
+                            key,
                             value: curr[key],
                             change: acc.hasOwnProperty(key)
                                 ? curr[key] - acc[key].value
@@ -58,8 +60,9 @@ function WebSocket() {
                     }), {})
                 }), {})
             )
-            .subscribe(v => {
-                setState(v);
+            .subscribe({
+                next: setState,
+                error: console.log
             });
 
         return () => {
@@ -96,19 +99,7 @@ function WebSocket() {
                         .filter(key => activeStockKeysRef.current.includes(key))
                         .map(key => (
                             <Grid key={key} item xs={3}>
-                                <Card>
-                                    <CardContent>
-                                        <h3>{key}</h3>
-                                        <h4>{state[key].value}</h4>
-                                        <h5>{
-                                            state[key].change > 0 ? '+' :
-                                                state[key].change < 0 ? '-' :
-                                                    0
-                                        }
-                                        </h5>
-                                        <Button color="secondary" variant="contained" onClick={() => onUnsubscribe(key)}>Unsubscribe</Button>
-                                    </CardContent>
-                                </Card>
+                                <StockCard stock={state[key]} onUnsubscribe={onUnsubscribe} />
                             </Grid>
                         ))
                 }
