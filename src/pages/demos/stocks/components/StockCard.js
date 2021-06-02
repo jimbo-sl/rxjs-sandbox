@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, makeStyles } from '@material-ui/core'
 import { ArrowDownwardRounded, ArrowUpwardRounded } from '@material-ui/icons'
-import React from 'react'
+import React, { memo } from 'react'
 
 const useStyles = makeStyles((theme) => ({
     stockTitle: {
@@ -53,4 +53,4 @@ const StockCard = ({ stock, onUnsubscribe }) => {
     )
 }
 
-export default StockCard
+export default memo(StockCard)
