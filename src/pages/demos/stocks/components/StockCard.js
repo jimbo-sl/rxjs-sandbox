@@ -28,7 +28,7 @@ const StockCard = ({ stock, onUnsubscribe }) => {
 
     const handleUnsubscribeClick = useCallback(() => {
         onUnsubscribe(stock.key)
-    }, []);
+    }, [stock, onUnsubscribe]);
 
     return (
         <Card>

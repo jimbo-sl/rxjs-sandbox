@@ -38,6 +38,7 @@ const stockFeed$ = connection$
 
                 return {
                     ...stock,
+                    hasTradeRecorded: true,
                     change: existing != null
                         ? stock.value - existing.value
                         : 0
@@ -62,10 +63,7 @@ const service = {
             const stock = stocks.find(x => x.key === key);
 
             return stock != null
-                ? {
-                    ...stock,
-                    hasTradeRecorded: true
-                }
+                ? stock
                 : {
                     key,
                     hasTradeRecorded: false
