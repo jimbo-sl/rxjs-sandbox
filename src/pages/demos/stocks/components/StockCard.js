@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, makeStyles } from '@material-ui/core'
 import { ArrowDownwardRounded, ArrowUpwardRounded } from '@material-ui/icons'
-import React, { memo } from 'react'
+import React, { memo, useCallback } from 'react'
 
 const useStyles = makeStyles((theme) => ({
     stockTitle: {
@@ -26,24 +26,37 @@ const useStyles = makeStyles((theme) => ({
 const StockCard = ({ stock, onUnsubscribe }) => {
     const classes = useStyles();
 
+    const handleUnsubscribeClick = useCallback(() => {
+        onUnsubscribe(stock.key)
+    }, []);
+
     return (
         <Card>
             <CardContent>
                 <span className={classes.stockTitle}>{stock.key}</span>
-                <div className={classes.stockValueContainer}>
-                    <span className={classes.stockValue}>{stock.value}</span>
-                    {
-                        stock.change > 0 ? <ArrowUpwardRounded />
-                            : stock.change < 0 ? <ArrowDownwardRounded />
-                                : null
-                    }
-                </div>
+
+                {
+                    stock.hasTradeRecorded
+                        ? (
+                            <div className={classes.stockValueContainer}>
+                                <span className={classes.stockValue}>{stock.value}</span>
+                                {
+                                    stock.change > 0 ? <ArrowUpwardRounded />
+                                        : stock.change < 0 ? <ArrowDownwardRounded />
+                                            : null
+                                }
+                            </div>
+                        ) : (
+                            'Waiting for a trade'
+                        )
+                }
+
                 <div className={classes.buttonContainer}>
                     <Button
                         color="secondary"
                         variant="contained"
                         size="small"
-                        onClick={() => onUnsubscribe(stock.key)}
+                        onClick={handleUnsubscribeClick}
                     >
                         Unsubscribe
                 </Button>
