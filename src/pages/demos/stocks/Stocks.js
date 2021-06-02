@@ -1,9 +1,7 @@
-import { Grid } from '@material-ui/core';
 import { useEffect, useRef, useState } from 'react';
-import { debounceTime, filter, map, pluck, scan, tap } from 'rxjs/operators';
+import { debounceTime, filter, map, pluck, scan } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
-import StockCard from './components/StockCard';
-import StockInput from './components/StockInput';
+import StocksDisplay from './StocksDisplay';
 
 const obs$ = webSocket('wss://ws.finnhub.io?token=c2lrsuqad3ice2ned680');
 
@@ -67,25 +65,13 @@ function Stocks() {
         setActiveStockKeys([...activeStockKeys, stock])
     }
 
-    const onUnsubscribe = (key) => {
-        obs$.next({ type: "unsubscribe", symbol: key });
-        setActiveStockKeys(activeStockKeys.filter(x => x !== key));
+    const onRemoveFromFeed = (stock) => {
+        obs$.next({ type: "unsubscribe", symbol: stock });
+        setActiveStockKeys(activeStockKeys.filter(x => x !== stock));
     }
 
     return (
-        <>
-            <StockInput onStockAdded={onAddToFeed} />
-
-            <Grid container spacing={3}>
-                {
-                    stocks.map(stock => (
-                        <Grid key={stock.key} item xs={3}>
-                            <StockCard stock={stock} onUnsubscribe={onUnsubscribe} />
-                        </Grid>
-                    ))
-                }
-            </Grid>
-        </>
+        <StocksDisplay stocks={stocks} onAddToFeed={onAddToFeed} onRemoveFromFeed={onRemoveFromFeed}/>
     )
 }
 
