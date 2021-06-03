@@ -1,5 +1,5 @@
 import { combineLatest, Subject } from 'rxjs';
-import { debounceTime, filter, map, pluck, scan } from 'rxjs/operators';
+import { debounceTime, filter, map, mergeWith, pluck, scan, tap } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
 
 const connection$ = webSocket('wss://ws.finnhub.io?token=c2lrsuqad3ice2ned680');
@@ -13,14 +13,15 @@ const keys$ = stockKeyActions$.pipe(
             arr = arr.filter(x => x !== action.stock)
         }
         return arr;
-    }, [])
+    }, []),
+    map(keys => ({
+        type: 'keys',
+        data: keys
+    }))
 )
-
-keys$.subscribe(console.log)
 
 const stockFeed$ = connection$
     .pipe(
-        debounceTime(250),
         filter(v => v.type === 'trade'),
         pluck('data'),
         map(data => data.reduce((acc, curr) => ([
@@ -44,7 +45,11 @@ const stockFeed$ = connection$
                         : 0
                 }
             })
-        ]), [])
+        ]), []),
+        map(stocks => ({
+            type: 'stocks',
+            data: stocks
+        }))
     );
 
 const service = {
@@ -58,17 +63,32 @@ const service = {
         connection$.next({ type: 'unsubscribe', symbol: stock });
     },
 
-    getFeed$: () => combineLatest([keys$, stockFeed$]).pipe(
-        map(([keys, stocks]) => keys.map(key => {
+    getFeed$: () => keys$.pipe(
+        mergeWith(stockFeed$),
+        tap(console.log),
+        scan((acc, val) => ({
+            ...acc,
+            [val.type]: val.data
+        }), {}),
+        scan((acc, { keys, stocks }) => keys.map(key => {
+            const existing = acc.find(x => x.key === key);
+
+            if (stocks == null) {
+                return existing || {
+                    key,
+                    hasTradeRecorded: false
+                }
+            }
+
             const stock = stocks.find(x => x.key === key);
 
             return stock != null
                 ? stock
-                : {
+                : existing || {
                     key,
                     hasTradeRecorded: false
                 }
-        }))
+        }), [])
     )
 }
 
