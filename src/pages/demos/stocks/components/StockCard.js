@@ -2,6 +2,7 @@ import { Button, Card, CardContent, makeStyles } from '@material-ui/core'
 import React, { memo, useCallback } from 'react'
 import StockValue from './StockValue';
 import StockWaiting from './StockWaiting';
+import roles from '../constants/stocks-element-roles';
 
 const useStyles = makeStyles((theme) => ({
     stockTitle: {
@@ -25,7 +26,7 @@ const StockCard = ({ stock, onUnsubscribe }) => {
     return (
         <Card>
             <CardContent>
-                <span className={classes.stockTitle}>{stock.key}</span>
+                <span role={roles.stockNameText} className={classes.stockTitle}>{stock.key}</span>
 
                 {
                     stock.hasTradeRecorded
@@ -35,6 +36,7 @@ const StockCard = ({ stock, onUnsubscribe }) => {
 
                 <div className={classes.buttonContainer}>
                     <Button
+                        role={roles.removeFromFeedButton}
                         color="secondary"
                         variant="contained"
                         size="small"

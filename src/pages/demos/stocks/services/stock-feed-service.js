@@ -1,5 +1,5 @@
-import { combineLatest, Subject } from 'rxjs';
-import { debounceTime, filter, map, mergeWith, pluck, scan, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, map, mergeWith, pluck, scan, tap } from 'rxjs/operators';
 import { webSocket } from 'rxjs/webSocket';
 
 const connection$ = webSocket('wss://ws.finnhub.io?token=c2lrsuqad3ice2ned680');

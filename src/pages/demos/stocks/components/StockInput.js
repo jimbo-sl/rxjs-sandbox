@@ -1,5 +1,6 @@
-import { Button, makeStyles, TextField } from '@material-ui/core'
+import { Button, FormLabel, Input, makeStyles, TextField } from '@material-ui/core'
 import React, { memo, useCallback, useState } from 'react'
+import roles from '../constants/stocks-element-roles';
 
 const useStyles = makeStyles((theme) => ({
     btn: {
@@ -28,11 +29,11 @@ function StockInput({ onStockAdded }) {
                     label="Stock"
                     value={stockName}
                     onChange={(e) => setStockName(e.currentTarget.value.toUpperCase())}
-                    inputProps={{ style: { textTransform: 'uppercase' } }}
+                    inputProps={{ role: roles.stockNameInput, style: { textTransform: 'uppercase' } }}
                 />
             </form>
 
-            <Button className={classes.btn} variant="contained" color="primary" onClick={handleSubmit}>Add to feed</Button>
+            <Button role={roles.addToFeedButton} className={classes.btn} variant="contained" color="primary" onClick={handleSubmit}>Add to feed</Button>
         </>
     )
 }
