@@ -13,10 +13,6 @@ function StocksDisplay({ stocks, onAddToFeed, onRemoveFromFeed }) {
                 {
                     stocks
                         .sort((a, b) => b.key < a.key ? 1 : -1)
-                        .map(x => {
-                            console.log('HELLO HELLO', x);
-                            return x;
-                        })
                         .map(stock => (
                             <Grid key={stock.key} item xs={3}>
                                 <StockCard stock={stock} onUnsubscribe={onRemoveFromFeed} />
@@ -29,12 +25,7 @@ function StocksDisplay({ stocks, onAddToFeed, onRemoveFromFeed }) {
 }
 
 StocksDisplay.propTypes = {
-    stocks: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string.isRequired,
-        value: PropTypes.number.isRequired,
-        hasTradeRecorded: PropTypes.bool.isRequired,
-        change: PropTypes.number.isRequired
-    })).isRequired,
+    stocks: PropTypes.array.isRequired,
     onAddToFeed: PropTypes.func.isRequired,
     onRemoveFromFeed: PropTypes.func.isRequired
 }

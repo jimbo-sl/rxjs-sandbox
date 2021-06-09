@@ -14,6 +14,7 @@ function Stocks() {
 
         return () => {
             sub.unsubscribe();
+            stockFeedService.closeConnection();
         }
 
     }, [])

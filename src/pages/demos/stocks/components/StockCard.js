@@ -3,6 +3,7 @@ import React, { memo, useCallback } from 'react'
 import StockValue from './StockValue';
 import StockWaiting from './StockWaiting';
 import roles from '../constants/stocks-element-roles';
+import PropTypes from 'prop-types'
 
 const useStyles = makeStyles((theme) => ({
     stockTitle: {
@@ -48,6 +49,16 @@ const StockCard = ({ stock, onUnsubscribe }) => {
             </CardContent>
         </Card>
     )
+}
+
+StockCard.propTypes = {
+    stock: PropTypes.shape({
+        key: PropTypes.string.isRequired,
+        hasTradeRecorded: PropTypes.bool.isRequired,
+        value: PropTypes.number,
+        change: PropTypes.number
+    }).isRequired,
+    onUnsubscribe: PropTypes.func.isRequired
 }
 
 export default memo(StockCard)

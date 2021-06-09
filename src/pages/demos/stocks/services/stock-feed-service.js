@@ -1,11 +1,79 @@
 import { Subject } from 'rxjs';
 import { filter, map, mergeWith, pluck, scan, tap } from 'rxjs/operators';
-import { webSocket } from 'rxjs/webSocket';
+import { socketWrapper } from '../../../../services/web-socket-client';
 
-const connection$ = webSocket('wss://ws.finnhub.io?token=c2lrsuqad3ice2ned680');
+let connection$ = null;
 const stockKeyActions$ = new Subject();
 
-const keys$ = stockKeyActions$.pipe(
+const service = {
+    subscribeToStock: (stock) => {
+        openConnectionIfNecessary();
+
+        stockKeyActions$.next({ type: 'subscribe', stock })
+        connection$.next({ type: 'subscribe', symbol: stock });
+    },
+
+    unsubscribeFromStock: (stock) => {
+        openConnectionIfNecessary();
+
+        stockKeyActions$.next({ type: 'unsubscribe', stock })
+        connection$.next({ type: 'unsubscribe', symbol: stock });
+    },
+
+    closeConnection() {
+        if (connection$ != null) {
+            connection$.complete();
+            connection$ = null;
+        }
+    },
+
+    getFeed$: () => {
+
+        openConnectionIfNecessary();
+
+        const keys$ = mapToKeyArray(stockKeyActions$);
+        const stockFeed$ = mapToStockFeed(connection$);
+
+        return keys$.pipe(
+            mergeWith(stockFeed$),
+            scan((acc, val) => ({
+                ...acc,
+                [val.type]: val.data
+            }), {}),
+            scan((acc, { keys, stocks }) => keys.map(key => {
+                const existing = acc.find(x => x.key === key);
+
+                if (stocks == null) {
+                    return existing || {
+                        key,
+                        hasTradeRecorded: false
+                    }
+                }
+
+                const stock = stocks.find(x => x.key === key);
+
+                return stock != null
+                    ? stock
+                    : existing || {
+                        key,
+                        hasTradeRecorded: false
+                    }
+            }), [])
+        )
+    }
+}
+
+const createConnection = () => {
+    return socketWrapper.socket$('wss://ws.finnhub.io?token=c2lrsuqad3ice2ned680');
+}
+
+const openConnectionIfNecessary = () => {
+    if (connection$ == null) {
+        connection$ = createConnection();
+    }
+}
+
+const mapToKeyArray = actions$ => actions$.pipe(
     scan((arr, action) => {
         if (action.type === 'subscribe') {
             arr = [...arr, action.stock]
@@ -20,7 +88,7 @@ const keys$ = stockKeyActions$.pipe(
     }))
 )
 
-const stockFeed$ = connection$
+const mapToStockFeed = (data$) => data$
     .pipe(
         filter(v => v.type === 'trade'),
         pluck('data'),
@@ -51,45 +119,5 @@ const stockFeed$ = connection$
             data: stocks
         }))
     );
-
-const service = {
-    subscribeToStock: (stock) => {
-        stockKeyActions$.next({ type: 'subscribe', stock })
-        connection$.next({ type: 'subscribe', symbol: stock });
-    },
-
-    unsubscribeFromStock: (stock) => {
-        stockKeyActions$.next({ type: 'unsubscribe', stock })
-        connection$.next({ type: 'unsubscribe', symbol: stock });
-    },
-
-    getFeed$: () => keys$.pipe(
-        mergeWith(stockFeed$),
-        tap(console.log),
-        scan((acc, val) => ({
-            ...acc,
-            [val.type]: val.data
-        }), {}),
-        scan((acc, { keys, stocks }) => keys.map(key => {
-            const existing = acc.find(x => x.key === key);
-
-            if (stocks == null) {
-                return existing || {
-                    key,
-                    hasTradeRecorded: false
-                }
-            }
-
-            const stock = stocks.find(x => x.key === key);
-
-            return stock != null
-                ? stock
-                : existing || {
-                    key,
-                    hasTradeRecorded: false
-                }
-        }), [])
-    )
-}
 
 export default service;
