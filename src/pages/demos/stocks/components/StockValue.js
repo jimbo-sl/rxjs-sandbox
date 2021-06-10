@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import { ArrowDownwardRounded, ArrowUpwardRounded } from '@material-ui/icons';
 import { memo, useEffect, useState } from "react"
+import roles from '../constants/stocks-element-roles';
 
 const useStyles = makeStyles((theme) => ({
     stockValue: {
@@ -27,12 +28,12 @@ function StockValue({ value, change }) {
 
     return (
         <div className={classes.stockValueContainer}>
-            <span className={classes.stockValue}>{value}</span>
+            <span role={roles.stockValueText} className={classes.stockValue}>{value}</span>
             {
                 visible &&
                 (
-                    change > 0 ? <ArrowUpwardRounded />
-                        : change < 0 ? <ArrowDownwardRounded />
+                    change > 0 ? <div role={roles.stockValueIncreased}><ArrowUpwardRounded /></div>
+                        : change < 0 ? <div role={roles.stockValueDecreased}><ArrowDownwardRounded /></div>
                             : null
                 )
             }
