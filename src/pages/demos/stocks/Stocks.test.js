@@ -23,20 +23,14 @@ afterEach(() => {
 describe('Stocks', () => {
     let mockWebSocket$;
     let socketSpy;
-    let subscribeToStockSpy;
-    let unsubscribeFromStockSpy;
 
     beforeEach(() => {
         mockWebSocket$ = new Subject();
         socketSpy = jest.spyOn(socketWrapper, "socket$").mockReturnValue(mockWebSocket$);
-        subscribeToStockSpy = jest.spyOn(service, 'subscribeToStock');
-        unsubscribeFromStockSpy = jest.spyOn(service, 'unsubscribeFromStock');
     })
 
     afterEach(() => {
         socketSpy.mockRestore();
-        subscribeToStockSpy.mockRestore();
-        unsubscribeFromStockSpy.mockRestore();
     })
 
     const enterStockAndSubmit = (stock) => {
@@ -65,37 +59,35 @@ describe('Stocks', () => {
         })
     }
 
-    describe('when adding stock via input', () => {
-
-        it('should send value to websocket', done => {
-            const stockName = 'AAA';
-
-            const sub = mockWebSocket$.subscribe(x => {
-                expect(x.symbol).toEqual(stockName);
-                sub.unsubscribe();
-                done();
-            });
-
-            act(() => {
-                render(<Stocks />, container);
-            });
-
-            enterStockAndSubmit(stockName);
-
-            expect(subscribeToStockSpy).toHaveBeenCalledTimes(1);
-            expect(subscribeToStockSpy).toHaveBeenCalledWith(stockName);
-        })
+    describe('when adding a stock to the feed', () => {
+        const stockNameOne = 'BBB';
+        const stockNameTwo = 'AAA';
 
         it('should display the stock with no trade value', () => {
-            const stockName = 'BBB';
-
             act(() => {
                 render(<Stocks />, container);
             });
 
-            enterStockAndSubmit(stockName);
+            enterStockAndSubmit(stockNameOne);
 
-            expect(getByRole(container, roles.stockNameText)).toHaveTextContent(stockName)
+            expect(getByRole(container, roles.stockNameText)).toHaveTextContent(stockNameOne)
+            expect(queryByRole(container, roles.stockValueText)).not.toBeInTheDocument()
+        })
+
+        describe('when adding another stock to the feed', () => {
+            it('should display both stocks in alphabetical order', () => {    
+                act(() => {
+                    render(<Stocks />, container);
+                });
+
+                enterStockAndSubmit(stockNameTwo);
+                enterStockAndSubmit(stockNameOne);
+    
+                const stocks = getAllByRole(container, roles.stockNameText);
+
+                expect(stocks[0]).toHaveTextContent(stockNameTwo)
+                expect(stocks[1]).toHaveTextContent(stockNameOne)
+            })
         })
     })
 
