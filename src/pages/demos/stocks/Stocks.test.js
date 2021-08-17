@@ -1,10 +1,9 @@
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import roles from './constants/stocks-element-roles';
-import { getAllByRole, getByRole, queryByRole } from "@testing-library/dom";
-import { fireEvent } from "@testing-library/dom";
+import { getAllByRole, getByRole, queryByRole } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
 import { Subject } from "rxjs";
-import service from './services/stock-feed-service';
 import Stocks from "./Stocks";
 import { socketWrapper } from "../../../services/web-socket-client";
 

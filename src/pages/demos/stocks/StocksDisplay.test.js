@@ -3,8 +3,8 @@ import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import StocksDisplay from "./StocksDisplay";
 import roles from './constants/stocks-element-roles';
-import { getByRole } from "@testing-library/dom";
-import { fireEvent } from "@testing-library/dom";
+import { getByRole } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
 
 let container = null;
 beforeEach(() => {
